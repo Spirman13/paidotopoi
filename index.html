@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Παιδότοποι & Πάρκα</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <header class="header" style="justify-content: space-between; align-items: center;">
+      <h1>🧸 Παιδότοποι & Πάρκα</h1>
+
+      <!-- 🔐 Περιοχή login -->
+      <div style="display:flex; gap:8px; align-items:center;">
+        <span id="userInfo"></span>
+        <button id="loginBtn" class="btn small">Σύνδεση με Google</button>
+        <button id="logoutBtn" class="btn small" style="display:none;">Αποσύνδεση</button>
+      </div>
+    </header>
+
+    <!-- 🗂️ Φίλτρα αναζήτησης -->
+    <div class="filters">
+      <div class="field">
+        <label for="category">Κατηγορία</label>
+        <select id="category">
+          <option value="">Όλα</option>
+          <option value="Παιδότοπος">Παιδότοποι</option>
+          <option value="Πάρκο">Πάρκα</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="area">Περιοχή</label>
+        <select id="area">
+          <option value="">Όλες</option>
+        </select>
+      </div>
+
+      <button id="searchBtn" class="btn">Αναζήτηση</button>
+    </div>
+
+    <!-- 📍 Κύριο περιεχόμενο -->
+    <div class="grid">
+      <div id="map"></div>
+      <div class="cards" id="cards"></div>
+    </div>
+
+    <div class="foot">© 2025 Παιδότοποι - All rights reserved.</div>
+  </div>
+
+  <!-- 🔐 Firebase Login Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDxG8p1ZybuY-N-WU3BCcN15U_IUlBDbnc",
+      authDomain: "paidotopoi-a398e.firebaseapp.com",
+      projectId: "paidotopoi-a398e",
+      storageBucket: "paidotopoi-a398e.firebasestorage.app",
+      messagingSenderId: "323547066769",
+      appId: "1:323547066769:web:fe4bf1e685a2e754d8ea30",
+      measurementId: "G-Z593YPX9R8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const userInfo = document.getElementById("userInfo");
+
+    if (loginBtn) {
+      loginBtn.addEventListener("click", async () => {
+        try {
+          const result = await signInWithPopup(auth, provider);
+          const user = result.user;
+          userInfo.textContent = `👋 ${user.displayName}`;
+          loginBtn.style.display = "none";
+          logoutBtn.style.display = "inline-block";
+        } catch (err) {
+          console.error(err);
+          alert("Η σύνδεση απέτυχε.");
+        }
+      });
+    }
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        await signOut(auth);
+        userInfo.textContent = "";
+        loginBtn.style.display = "inline-block";
+        logoutBtn.style.display = "none";
+      });
+    }
+  </script>
+
+  <!-- 🗺️ Script χάρτη + δεδομένα -->
+  <script src="script.js"></script>
+</body>
+</html>
